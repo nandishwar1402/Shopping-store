@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAANA BAANA — Owner Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#111108;--surface:#1C1B14;--s2:#252419;--border:#2E2C22;
+  --ink:#F0EDE4;--muted:#7A7868;--accent:#C8823A;--a2:#E09856;
+  --danger:#C84040;--success:#3A8B5C;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;min-height:100vh;}
+
+/* LOGIN */
+#ls{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.lbox{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:44px 40px;width:100%;max-width:360px;}
+.llogo{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;margin-bottom:4px;}
+.llogo span{color:var(--accent);}
+.lsub{font-size:12px;color:var(--muted);margin-bottom:30px;}
+.lerr{color:var(--danger);font-size:13px;margin-bottom:12px;display:none;}
+
+/* INPUTS */
+label{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.5px;margin-bottom:5px;}
+input,textarea,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;color:var(--ink);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:14px;}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:76px;}
+select option{background:var(--s2);}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border-radius:7px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;}
+.btn-p{background:var(--accent);color:#fff;}
+.btn-p:hover{background:var(--a2);}
+.btn-full{width:100%;}
+.btn-sm{font-size:12px;padding:6px 12px;}
+.btn-del{background:rgba(200,64,64,.15);color:var(--danger);border:1px solid rgba(200,64,64,.2);}
+.btn-del:hover{background:var(--danger);color:#fff;}
+.btn-edit{background:var(--s2);color:var(--ink);border:1px solid var(--border);}
+.btn-edit:hover{border-color:var(--accent);color:var(--accent);}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--danger);color:var(--danger);}
+
+/* ADMIN SHELL */
+#as{display:none;}
+.anav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.alogo{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:3px;}
+.alogo span{color:var(--accent);font-size:11px;letter-spacing:1px;margin-left:8px;vertical-align:middle;background:rgba(200,130,58,.15);padding:2px 8px;border-radius:4px;}
+.tabs{display:flex;gap:4px;}
+.tab{background:none;border:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;padding:7px 15px;border-radius:6px;cursor:pointer;transition:all .18s;}
+.tab.on{background:var(--s2);color:var(--ink);}
+
+/* CONTENT */
+.cnt{max-width:1080px;margin:0 auto;padding:32px 24px;}
+.panel{display:none;}
+.panel.on{display:block;}
+
+/* STAT ROW */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.stat-n{font-size:26px;font-weight:600;color:var(--accent);margin-bottom:3px;}
+.stat-l{font-size:12px;color:var(--muted);}
+
+/* SECTION BOX */
+.sbox{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:22px;}
+.sbox-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sbox-head h3{font-size:14px;font-weight:500;}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:20px;}
+
+/* FORM GRID */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:22px;}
+.fgrid .full{grid-column:1/-1;}
+.img-prev{width:100%;height:180px;background:var(--s2);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden;}
+.img-prev img{width:100%;height:100%;object-fit:cover;}
+.img-ph{color:var(--muted);font-size:13px;text-align:center;}
+.add-err{color:var(--danger);font-size:13px;margin:0 22px 14px;display:none;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--border);font-weight:500;}
+td{padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--s2);}
+.thumb{width:42px;height:54px;border-radius:5px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex-shrink:0;}
+.thumb img{width:100%;height:100%;object-fit:cover;}
+.catbadge{font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(200,130,58,.13);color:var(--accent);font-weight:500;}
+.acts{display:flex;gap:6px;}
+.nodata{text-align:center;padding:48px;color:var(--muted);font-size:14px;}
+
+/* EDIT MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.mbg.on{display:flex;}
+.mbox{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.mbox h3{font-size:16px;font-weight:600;margin-bottom:20px;}
+.mfoot{display:flex;gap:10px;margin-top:4px;}
+
+/* ORDERS */
+.ocard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px;}
+.ohead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.oid{font-size:12px;color:var(--muted);}
+.ostatus{font-size:11px;padding:3px 10px;border-radius:99px;}
+.os-pending{background:rgba(200,130,58,.15);color:var(--accent);}
+.os-done{background:rgba(58,139,92,.15);color:var(--success);}
+.oitems{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5;}
+.ocust{font-size:13px;margin-bottom:6px;}
+.ototal{font-size:15px;font-weight:600;}
+.odate{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#fff;padding:11px 20px;border-radius:8px;font-size:13px;z-index:600;transition:transform .28s;white-space:nowrap;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lbox">
+    <div class="llogo">TAANA <span>BAANA</span></div>
+    <div class="lsub">Owner access only</div>
+    <div class="lerr" id="lerr">Wrong username or password</div>
+    <label>USERNAME</label>
+    <input type="text" id="lu" placeholder="owner">
+    <label>PASSWORD</label>
+    <input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-p btn-full" onclick="login()">Sign in →</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="as">
+  <nav class="anav">
+    <div class="alogo">TAANA <span>ADMIN</span></div>
+    <div class="tabs">
+      <button class="tab on" onclick="sw('products',this)">Products</button>
+      <button class="tab" onclick="sw('add',this)">+ Add</button>
+      <button class="tab" onclick="sw('orders',this)">Orders</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+  </nav>
+
+  <div class="cnt">
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="stp">0</div><div class="stat-l">Products</div></div>
+      <div class="stat"><div class="stat-n" id="sto">0</div><div class="stat-l">Orders</div></div>
+      <div class="stat"><div class="stat-n" id="str">₹0</div><div class="stat-l">Revenue</div></div>
+    </div>
+
+    <!-- PRODUCTS PANEL -->
+    <div class="panel on" id="panel-products">
+      <div class="sbox">
+        <div class="sbox-head">
+          <h3>All Products</h3>
+          <span id="pcnt" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+        <table>
+          <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead>
+          <tbody id="ptbody"><tr><td colspan="5" class="nodata">No products yet. Add your first one!</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADD PANEL -->
+    <div class="panel" id="panel-add">
+      <div class="stitle">Add New Product</div>
+      <div class="sbox">
+        <div class="fgrid">
+          <div>
+            <label>PRODUCT NAME *</label>
+            <input type="text" id="pn" placeholder="e.g. Floral Kurti">
+          </div>
+          <div>
+            <label>CATEGORY *</label>
+            <select id="pc">
+              <option value="">Select…</option>
+              <option>Men</option><option>Women</option><option>Kids</option>
+              <option>Ethnic</option><option>Casual</option>
+            </select>
+          </div>
+          <div>
+            <label>PRICE (₹) *</label>
+            <input type="number" id="pp" placeholder="e.g. 799" min="0">
+          </div>
+          <div>
+            <label>SIZES (optional)</label>
+            <input type="text" id="ps" placeholder="S, M, L, XL">
+          </div>
+          <div class="full">
+            <label>DESCRIPTION (optional)</label>
+            <textarea id="pd" placeholder="Fabric, style, occasion…"></textarea>
+          </div>
+          <div class="full">
+            <label>IMAGE PREVIEW</label>
+            <div class="img-prev" id="iprev">
+              <div class="img-ph">
+                <div style="font-size:32px;margin-bottom:8px">🖼</div>
+                <div>Paste image URL below to preview</div>
+              </div>
+            </div>
+            <label>IMAGE URL (optional)</label>
+            <input type="text" id="pi" placeholder="https://…" oninput="prevImg(this.value,'iprev')">
+            <div style="font-size:12px;color:var(--muted)">
+              Upload free at <a href="https://imgbb.com" target="_blank" style="color:var(--accent)">imgbb.com</a> → copy Direct link
+            </div>
+          </div>
+        </div>
+        <div class="add-err" id="aerr"></div>
+        <div style="padding:0 22px 22px">
+          <button class="btn btn-p" style="padding:11px 32px" onclick="addProduct()">Add Product →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS PANEL -->
+    <div class="panel" id="panel-orders">
+      <div class="stitle">Customer Orders</div>
+      <div id="olist"><div class="nodata">No orders yet</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="mbg" id="emodal">
+  <div class="mbox">
+    <h3>Edit Product</h3>
+    <input type="hidden" id="eid">
+    <label>NAME</label><input type="text" id="en">
+    <label>CATEGORY</label>
+    <select id="ec"><option>Men</option><option>Women</option><option>Kids</option><option>Ethnic</option><option>Casual</option></select>
+    <label>PRICE (₹)</label><input type="number" id="ep">
+    <label>SIZES</label><input type="text" id="es">
+    <label>DESCRIPTION</label><textarea id="ed"></textarea>
+    <label>IMAGE URL</label><input type="text" id="ei" oninput="prevImg(this.value,'eprev')">
+    <div class="img-prev" id="eprev" style="margin-bottom:14px">
+      <div class="img-ph"><div style="font-size:24px">🖼</div></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-p" style="flex:1" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SK='tb_products', OK='tb_orders';
+const ADMIN_U='owner';      // ← change username
+const ADMIN_P='shop@2024';  // ← change password
+
+// ── AUTH ─────────────────────────────────────────────
+function login(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  const err=document.getElementById('lerr');
+  if(u===ADMIN_U&&p===ADMIN_P){
+    sessionStorage.setItem('tb_admin','1');
+    document.getElementById('ls').style.display='none';
+    document.getElementById('as').style.display='block';
+    loadAll();
+  } else { err.style.display='block'; }
+}
+function logout(){
+  sessionStorage.removeItem('tb_admin');
+  document.getElementById('ls').style.display='flex';
+  document.getElementById('as').style.display='none';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+}
+if(sessionStorage.getItem('tb_admin')){
+  document.getElementById('ls').style.display='none';
+  document.getElementById('as').style.display='block';
+  setTimeout(loadAll,0);
+}
+
+// ── DATA ─────────────────────────────────────────────
+function getP(){return JSON.parse(localStorage.getItem(SK)||'[]');}
+function getO(){return JSON.parse(localStorage.getItem(OK)||'[]');}
+function saveP(arr){localStorage.setItem(SK,JSON.stringify(arr));}
+
+function loadAll(){renderTable();renderOrders();updateStats();}
+
+function updateStats(){
+  const p=getP(), o=getO();
+  document.getElementById('stp').textContent=p.length;
+  document.getElementById('sto').textContent=o.length;
+  document.getElementById('str').textContent='₹'+o.reduce((s,x)=>s+(x.total||0),0).toLocaleString('en-IN');
+}
+
+// ── TABS ─────────────────────────────────────────────
+function sw(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-'+name).classList.add('on');
+  btn.classList.add('on');
+  if(name==='products') renderTable();
+  if(name==='orders') renderOrders();
+}
+
+// ── PRODUCTS TABLE ────────────────────────────────────
+function renderTable(){
+  const prods=getP();
+  document.getElementById('pcnt').textContent=prods.length+' products';
+  const tb=document.getElementById('ptbody');
+  if(!prods.length){tb.innerHTML='<tr><td colspan="5" class="nodata">No products yet. Click "+ Add" to get started!</td></tr>';return;}
+  tb.innerHTML=prods.map(p=>`
+    <tr>
+      <td><div class="thumb">${p.img?`<img src="${p.img}" onerror="this.parentElement.innerHTML='👗'">`:'👗'}</div></td>
+      <td>
+        <div style="font-weight:500">${p.name}</div>
+        ${p.sizes?`<div style="font-size:12px;color:var(--muted);margin-top:2px">${p.sizes}</div>`:''}
+      </td>
+      <td><span class="catbadge">${p.cat||'—'}</span></td>
+      <td style="font-weight:600">₹${Number(p.price).toLocaleString('en-IN')}</td>
+      <td>
+        <div class="acts">
+          <button class="btn btn-edit btn-sm" onclick="openEdit('${p.id}')">Edit</button>
+          <button class="btn btn-del btn-sm" onclick="delProduct('${p.id}','${p.name.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ── ADD ───────────────────────────────────────────────
+function prevImg(url,prevId){
+  const el=document.getElementById(prevId);
+  if(url.trim()){
+    el.innerHTML=`<img src="${url}" onerror="this.parentElement.innerHTML='<div class=\\'img-ph\\'><div style=\\'font-size:24px\\'>❌</div><div>Cannot load image</div></div>'">`;
+  } else {
+    el.innerHTML='<div class="img-ph"><div style="font-size:32px;margin-bottom:8px">🖼</div><div>Paste image URL to preview</div></div>';
+  }
+}
+
+function addProduct(){
+  const name=document.getElementById('pn').value.trim();
+  const cat=document.getElementById('pc').value;
+  const price=document.getElementById('pp').value;
+  const err=document.getElementById('aerr');
+  if(!name||!cat||!price){err.textContent='Please fill Name, Category and Price.';err.style.display='block';return;}
+  err.style.display='none';
+  const prods=getP();
+  prods.push({
+    id:'p'+Date.now(),name,cat,price:Number(price),
+    sizes:document.getElementById('ps').value.trim(),
+    desc:document.getElementById('pd').value.trim(),
+    img:document.getElementById('pi').value.trim(),
+    at:Date.now()
+  });
+  saveP(prods);
+  ['pn','pc','pp','ps','pd','pi'].forEach(id=>{document.getElementById(id).value='';});
+  prevImg('','iprev');
+  toast('Product added!');
+  updateStats();
+}
+
+// ── EDIT ──────────────────────────────────────────────
+function openEdit(id){
+  const p=getP().find(x=>x.id===id);if(!p)return;
+  document.getElementById('eid').value=id;
+  document.getElementById('en').value=p.name;
+  document.getElementById('ec').value=p.cat;
+  document.getElementById('ep').value=p.price;
+  document.getElementById('es').value=p.sizes||'';
+  document.getElementById('ed').value=p.desc||'';
+  document.getElementById('ei').value=p.img||'';
+  prevImg(p.img||'','eprev');
+  document.getElementById('emodal').classList.add('on');
+}
+function closeModal(){document.getElementById('emodal').classList.remove('on');}
+function saveEdit(){
+  const id=document.getElementById('eid').value;
+  const prods=getP();
+  const i=prods.findIndex(x=>x.id===id);if(i<0)return;
+  prods[i]={...prods[i],
+    name:document.getElementById('en').value.trim(),
+    cat:document.getElementById('ec').value,
+    price:Number(document.getElementById('ep').value),
+    sizes:document.getElementById('es').value.trim(),
+    desc:document.getElementById('ed').value.trim(),
+    img:document.getElementById('ei').value.trim()
+  };
+  saveP(prods);closeModal();renderTable();updateStats();toast('Product updated!');
+}
+
+// ── DELETE ────────────────────────────────────────────
+function delProduct(id,name){
+  if(!confirm(`Delete "${name}"? This cannot be undone.`))return;
+  saveP(getP().filter(p=>p.id!==id));
+  renderTable();updateStats();toast('Product deleted.');
+}
+
+// ── ORDERS ────────────────────────────────────────────
+function renderOrders(){
+  const orders=getO();
+  const el=document.getElementById('olist');
+  if(!orders.length){el.innerHTML='<div class="nodata">No orders yet</div>';return;}
+  el.innerHTML=[...orders].reverse().map(o=>`
+    <div class="ocard">
+      <div class="ohead">
+        <span class="oid">Order #${o.id.replace('ORD','')}</span>
+        <span class="ostatus os-pending">Pending</span>
+      </div>
+      <div class="ocust">👤 ${o.name} &nbsp;|&nbsp; 📞 ${o.phone}${o.address?` &nbsp;|&nbsp; 📍 ${o.address}`:''}</div>
+      <div class="oitems">${(o.items||[]).map(i=>i.name).join(', ')}</div>
+      <div class="ototal">₹${Number(o.total||0).toLocaleString('en-IN')}</div>
+      <div class="odate">🕐 ${o.date}</div>
+    </div>`).join('');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2800);
+}
+
+// close modal on bg click
+document.getElementById('emodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
